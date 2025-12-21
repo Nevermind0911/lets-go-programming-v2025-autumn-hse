@@ -8,26 +8,30 @@ import (
 	"strings"
 
 	"github.com/Nevermind0911/task-3/internal/models"
-	"golang.org/x/net/html/charset"
 )
 
 func ReadAndConvert(path string) (models.Currencies, error) {
-	f, err := os.Open(path)
+	file, err := os.Open(path)
 	if err != nil {
 		return nil, fmt.Errorf("открытие XML файла: %w", err)
 	}
-	defer f.Close()
+
+	defer func() {
+		if err := file.Close(); err != nil {
+			panic(fmt.Sprintf("ошибка при закрытии файла: %v", err))
+		}
+	}()
 
 	var rawData models.InputData
-	decoder := xml.NewDecoder(f)
 
-	decoder.CharsetReader = charset.NewReaderLabel
+	decoder := xml.NewDecoder(file)
 
 	if err := decoder.Decode(&rawData); err != nil {
 		return nil, fmt.Errorf("ошибка структуры XML: %w", err)
 	}
 
 	result := make(models.Currencies, 0, len(rawData.Items))
+
 	for _, item := range rawData.Items {
 		valStr := strings.Replace(item.Value, ",", ".", 1)
 

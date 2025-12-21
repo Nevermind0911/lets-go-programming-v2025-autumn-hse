@@ -10,7 +10,7 @@ import (
 
 func SaveJSON(path string, data interface{}) error {
 	if err := filesystem.EnsurePathExists(path); err != nil {
-		return err
+		return fmt.Errorf("подготовка директории: %w", err)
 	}
 
 	bytes, err := json.MarshalIndent(data, "", "  ")
@@ -18,7 +18,7 @@ func SaveJSON(path string, data interface{}) error {
 		return fmt.Errorf("ошибка генерации JSON: %w", err)
 	}
 
-	if err := os.WriteFile(path, bytes, 0644); err != nil {
+	if err := os.WriteFile(path, bytes, 0600); err != nil {
 		return fmt.Errorf("ошибка записи файла: %w", err)
 	}
 
