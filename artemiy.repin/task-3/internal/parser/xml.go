@@ -8,6 +8,8 @@ import (
 	"strings"
 
 	"github.com/Nevermind0911/task-3/internal/models"
+
+	"golang.org/x/net/html/charset"
 )
 
 func ReadAndConvert(path string) (models.Currencies, error) {
@@ -25,6 +27,7 @@ func ReadAndConvert(path string) (models.Currencies, error) {
 	var rawData models.InputData
 
 	decoder := xml.NewDecoder(file)
+	decoder.CharsetReader = charset.NewReaderLabel
 
 	if err := decoder.Decode(&rawData); err != nil {
 		return nil, fmt.Errorf("ошибка структуры XML: %w", err)
