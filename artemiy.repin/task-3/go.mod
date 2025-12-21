@@ -5,7 +5,7 @@ go 1.22.7
 toolchain go1.24.11
 
 require (
-	golang.org/x/net v0.48.0
+	golang.org/x/net v0.23.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
