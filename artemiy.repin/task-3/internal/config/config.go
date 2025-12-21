@@ -15,12 +15,12 @@ type AppConfig struct {
 func Load(path string) (*AppConfig, error) {
 	bytes, err := os.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("чтение файла конфигурации: %w", err)
+		return nil, fmt.Errorf("reading config file: %w", err)
 	}
 
 	var cfg AppConfig
 	if err := yaml.Unmarshal(bytes, &cfg); err != nil {
-		return nil, fmt.Errorf("невалидный YAML формат: %w", err)
+		return nil, fmt.Errorf("invalid YAML format: %w", err)
 	}
 
 	return &cfg, nil

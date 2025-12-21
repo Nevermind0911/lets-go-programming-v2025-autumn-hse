@@ -15,24 +15,22 @@ func main() {
 	flag.Parse()
 
 	if *cfgPath == "" {
-		panic("Флаг -config обязателен")
+		panic("no flag -config")
 	}
 
 	cfg, err := config.Load(*cfgPath)
 	if err != nil {
-		panic(fmt.Sprintf("Ошибка загрузки конфига: %v", err))
+		panic(fmt.Sprintf("err config loading: %v", err))
 	}
 
 	data, err := parser.ReadAndConvert(cfg.SourceFile)
 	if err != nil {
-		panic(fmt.Sprintf("Ошибка обработки XML: %v", err))
+		panic(fmt.Sprintf("err XML parsing: %v", err))
 	}
 
 	sort.Sort(data)
 
 	if err := writer.SaveJSON(cfg.TargetFile, data); err != nil {
-		panic(fmt.Sprintf("Ошибка сохранения: %v", err))
+		panic(fmt.Sprintf("err saving: %v", err))
 	}
-
-	fmt.Println("Готово! Результат в", cfg.TargetFile)
 }

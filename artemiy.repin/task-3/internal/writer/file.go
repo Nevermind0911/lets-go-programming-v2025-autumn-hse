@@ -3,10 +3,13 @@ package writer
 import (
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"os"
 
 	"github.com/Nevermind0911/task-3/internal/filesystem"
 )
+
+const defaultFilePermission fs.FileMode = 0o600
 
 func SaveJSON(path string, data interface{}) error {
 	if err := filesystem.EnsurePathExists(path); err != nil {
@@ -18,7 +21,7 @@ func SaveJSON(path string, data interface{}) error {
 		return fmt.Errorf("ошибка генерации JSON: %w", err)
 	}
 
-	if err := os.WriteFile(path, bytes, 0o600); err != nil {
+	if err := os.WriteFile(path, bytes, defaultFilePermission); err != nil {
 		return fmt.Errorf("ошибка записи файла: %w", err)
 	}
 

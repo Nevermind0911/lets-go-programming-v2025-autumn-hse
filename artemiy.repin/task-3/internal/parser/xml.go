@@ -15,12 +15,12 @@ import (
 func ReadAndConvert(path string) (models.Currencies, error) {
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("открытие XML файла: %w", err)
+		return nil, fmt.Errorf("opening XML file: %w", err)
 	}
 
 	defer func() {
 		if err := file.Close(); err != nil {
-			panic(fmt.Sprintf("ошибка при закрытии файла: %v", err))
+			panic(fmt.Sprintf("err while closing file: %v", err))
 		}
 	}()
 
@@ -30,7 +30,7 @@ func ReadAndConvert(path string) (models.Currencies, error) {
 	decoder.CharsetReader = charset.NewReaderLabel
 
 	if err := decoder.Decode(&rawData); err != nil {
-		return nil, fmt.Errorf("ошибка структуры XML: %w", err)
+		return nil, fmt.Errorf("XML structure err: %w", err)
 	}
 
 	result := make(models.Currencies, 0, len(rawData.Items))
@@ -40,7 +40,7 @@ func ReadAndConvert(path string) (models.Currencies, error) {
 
 		valFloat, err := strconv.ParseFloat(valStr, 64)
 		if err != nil {
-			return nil, fmt.Errorf("ошибка числа в валюте %s: %w", item.CharCode, err)
+			return nil, fmt.Errorf("val number err %s: %w", item.CharCode, err)
 		}
 
 		result = append(result, models.FinalValute{
