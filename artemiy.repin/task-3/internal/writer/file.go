@@ -17,7 +17,6 @@ func SaveJSON(path string, data interface{}) error {
 	if err != nil {
 		return fmt.Errorf("ошибка генерации JSON: %w", err)
 	}
-
 	if err := os.WriteFile(path, bytes, 0600); err != nil {
 		return fmt.Errorf("ошибка записи файла: %w", err)
 	}

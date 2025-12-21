@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Nevermind0911/task-3/internal/models"
-
 	"golang.org/x/net/html/charset"
+
+	"github.com/Nevermind0911/task-3/internal/models"
 )
 
 func ReadAndConvert(path string) (models.Currencies, error) {
