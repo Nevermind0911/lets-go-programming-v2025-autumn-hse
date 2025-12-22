@@ -1,18 +1,17 @@
-package wifi
+package wifi_test
 
 import (
 	"errors"
 	"net"
 	"testing"
 
-	"github.com/mdlayher/wifi"
+	"github.com/Nevermind0911/task-6/internal/wifi"
+	mdlayherwifi "github.com/mdlayher/wifi"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-var (
-	mockErrInterfaces = errors.New("failed to retrieve interfaces")
-)
+var errInterfaces = errors.New("failed to retrieve interfaces")
 
 func TestGetAddresses_Success(t *testing.T) {
 	t.Parallel()
@@ -22,14 +21,14 @@ func TestGetAddresses_Success(t *testing.T) {
 	macAddr1, _ := net.ParseMAC("00:11:22:33:44:55")
 	macAddr2, _ := net.ParseMAC("66:77:88:99:aa:bb")
 
-	expectedInterfaces := []*wifi.Interface{
+	expectedInterfaces := []*mdlayherwifi.Interface{
 		{HardwareAddr: macAddr1},
 		{HardwareAddr: macAddr2},
 	}
 
 	mockHandle.On("Interfaces").Return(expectedInterfaces, nil)
 
-	svc := New(mockHandle)
+	svc := wifi.New(mockHandle)
 
 	addrs, err := svc.GetAddresses()
 
@@ -43,14 +42,14 @@ func TestGetAddresses_Error(t *testing.T) {
 
 	mockHandle := NewMockWiFiHandle(t)
 
-	mockHandle.On("Interfaces").Return(nil, mockErrInterfaces)
+	mockHandle.On("Interfaces").Return(nil, errInterfaces)
 
-	svc := New(mockHandle)
+	svc := wifi.New(mockHandle)
 
 	result, err := svc.GetAddresses()
 
 	require.Error(t, err)
-	assert.ErrorContains(t, err, "getting interfaces")
+	require.ErrorContains(t, err, "getting interfaces")
 	assert.Nil(t, result)
 }
 
@@ -59,9 +58,9 @@ func TestGetAddresses_Empty(t *testing.T) {
 
 	mockHandle := NewMockWiFiHandle(t)
 
-	mockHandle.On("Interfaces").Return([]*wifi.Interface{}, nil)
+	mockHandle.On("Interfaces").Return([]*mdlayherwifi.Interface{}, nil)
 
-	svc := New(mockHandle)
+	svc := wifi.New(mockHandle)
 
 	addrs, err := svc.GetAddresses()
 
@@ -75,14 +74,14 @@ func TestGetNames_Success(t *testing.T) {
 
 	mockHandle := NewMockWiFiHandle(t)
 
-	expectedInterfaces := []*wifi.Interface{
+	expectedInterfaces := []*mdlayherwifi.Interface{
 		{Name: "wlan0"},
 		{Name: "eth0"},
 	}
 
 	mockHandle.On("Interfaces").Return(expectedInterfaces, nil)
 
-	svc := New(mockHandle)
+	svc := wifi.New(mockHandle)
 
 	names, err := svc.GetNames()
 
@@ -95,13 +94,13 @@ func TestGetNames_Error(t *testing.T) {
 
 	mockHandle := NewMockWiFiHandle(t)
 
-	mockHandle.On("Interfaces").Return(nil, mockErrInterfaces)
+	mockHandle.On("Interfaces").Return(nil, errInterfaces)
 
-	svc := New(mockHandle)
+	svc := wifi.New(mockHandle)
 
 	names, err := svc.GetNames()
 
 	require.Error(t, err)
-	assert.ErrorContains(t, err, "getting interfaces")
+	require.ErrorContains(t, err, "getting interfaces")
 	assert.Nil(t, names)
 }

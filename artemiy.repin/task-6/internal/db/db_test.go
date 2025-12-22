@@ -1,18 +1,19 @@
-package db
+package db_test
 
 import (
 	"errors"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/Nevermind0911/task-6/internal/db"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 var (
-	mockErrSelect = errors.New("select query failure")
-	mockErrRows   = errors.New("row iteration failure")
-	mockErrClose  = errors.New("rows close failure")
+	errSelect = errors.New("select query failure")
+	errRows   = errors.New("row iteration failure")
+	errClose  = errors.New("rows close failure")
 )
 
 const (
@@ -25,11 +26,13 @@ const (
 
 func TestGetNames_Success(t *testing.T) {
 	t.Parallel()
-	db, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	defer db.Close()
 
-	s := New(db)
+	mockDB, mock, err := sqlmock.New()
+	require.NoError(t, err)
+
+	defer mockDB.Close()
+
+	s := db.New(mockDB)
 
 	rows := sqlmock.NewRows([]string{"name"}).
 		AddRow(userAlice).
@@ -45,11 +48,13 @@ func TestGetNames_Success(t *testing.T) {
 
 func TestGetNames_Empty(t *testing.T) {
 	t.Parallel()
-	db, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	defer db.Close()
 
-	s := New(db)
+	mockDB, mock, err := sqlmock.New()
+	require.NoError(t, err)
+
+	defer mockDB.Close()
+
+	s := db.New(mockDB)
 
 	rows := sqlmock.NewRows([]string{"name"})
 
@@ -63,69 +68,77 @@ func TestGetNames_Empty(t *testing.T) {
 
 func TestGetNames_QueryFail(t *testing.T) {
 	t.Parallel()
-	db, mock, err := sqlmock.New()
+
+	mockDB, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	defer db.Close()
 
-	s := New(db)
+	defer mockDB.Close()
 
-	mock.ExpectQuery(querySelectNames).WillReturnError(mockErrSelect)
+	s := db.New(mockDB)
+
+	mock.ExpectQuery(querySelectNames).WillReturnError(errSelect)
 
 	names, err := s.GetNames()
-	assert.ErrorContains(t, err, "db query")
+	require.ErrorContains(t, err, "db query")
 	assert.Nil(t, names)
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGetNames_ScanFail(t *testing.T) {
 	t.Parallel()
-	db, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	defer db.Close()
 
-	s := New(db)
+	mockDB, mock, err := sqlmock.New()
+	require.NoError(t, err)
+
+	defer mockDB.Close()
+
+	s := db.New(mockDB)
 
 	rows := sqlmock.NewRows([]string{"name"}).AddRow(nil)
 
 	mock.ExpectQuery(querySelectNames).WillReturnRows(rows)
 
 	names, err := s.GetNames()
-	assert.ErrorContains(t, err, "rows scanning")
+	require.ErrorContains(t, err, "rows scanning")
 	assert.Nil(t, names)
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGetNames_RowsIterationFail(t *testing.T) {
 	t.Parallel()
-	db, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	defer db.Close()
 
-	s := New(db)
+	mockDB, mock, err := sqlmock.New()
+	require.NoError(t, err)
+
+	defer mockDB.Close()
+
+	s := db.New(mockDB)
 
 	rows := sqlmock.NewRows([]string{"name"}).
 		AddRow(userAlice).
-		RowError(1, mockErrRows)
+		RowError(1, errRows)
 
 	mock.ExpectQuery(querySelectNames).WillReturnRows(rows)
 
 	names, err := s.GetNames()
-	assert.ErrorContains(t, err, "rows error")
+	require.ErrorContains(t, err, "rows error")
 	assert.Nil(t, names)
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGetNames_CloseFail(t *testing.T) {
 	t.Parallel()
-	db, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	defer db.Close()
 
-	s := New(db)
+	mockDB, mock, err := sqlmock.New()
+	require.NoError(t, err)
+
+	defer mockDB.Close()
+
+	s := db.New(mockDB)
 
 	rows := sqlmock.NewRows([]string{"name"}).
 		AddRow(userAlice).
-		CloseError(mockErrClose)
+		CloseError(errClose)
 
 	mock.ExpectQuery(querySelectNames).WillReturnRows(rows)
 
@@ -137,11 +150,13 @@ func TestGetNames_CloseFail(t *testing.T) {
 
 func TestGetUniqueNames_Success(t *testing.T) {
 	t.Parallel()
-	db, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	defer db.Close()
 
-	s := New(db)
+	mockDB, mock, err := sqlmock.New()
+	require.NoError(t, err)
+
+	defer mockDB.Close()
+
+	s := db.New(mockDB)
 
 	rows := sqlmock.NewRows([]string{"name"}).
 		AddRow(userAlice).
@@ -157,11 +172,13 @@ func TestGetUniqueNames_Success(t *testing.T) {
 
 func TestGetUniqueNames_Empty(t *testing.T) {
 	t.Parallel()
-	db, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	defer db.Close()
 
-	s := New(db)
+	mockDB, mock, err := sqlmock.New()
+	require.NoError(t, err)
+
+	defer mockDB.Close()
+
+	s := db.New(mockDB)
 
 	rows := sqlmock.NewRows([]string{"name"})
 
@@ -175,69 +192,77 @@ func TestGetUniqueNames_Empty(t *testing.T) {
 
 func TestGetUniqueNames_QueryFail(t *testing.T) {
 	t.Parallel()
-	db, mock, err := sqlmock.New()
+
+	mockDB, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	defer db.Close()
 
-	s := New(db)
+	defer mockDB.Close()
 
-	mock.ExpectQuery(querySelectUniqueNames).WillReturnError(mockErrSelect)
+	s := db.New(mockDB)
+
+	mock.ExpectQuery(querySelectUniqueNames).WillReturnError(errSelect)
 
 	names, err := s.GetUniqueNames()
-	assert.ErrorContains(t, err, "db query")
+	require.ErrorContains(t, err, "db query")
 	assert.Nil(t, names)
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGetUniqueNames_ScanFail(t *testing.T) {
 	t.Parallel()
-	db, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	defer db.Close()
 
-	s := New(db)
+	mockDB, mock, err := sqlmock.New()
+	require.NoError(t, err)
+
+	defer mockDB.Close()
+
+	s := db.New(mockDB)
 
 	rows := sqlmock.NewRows([]string{"name"}).AddRow(nil)
 
 	mock.ExpectQuery(querySelectUniqueNames).WillReturnRows(rows)
 
 	names, err := s.GetUniqueNames()
-	assert.ErrorContains(t, err, "rows scanning")
+	require.ErrorContains(t, err, "rows scanning")
 	assert.Nil(t, names)
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGetUniqueNames_RowsIterationFail(t *testing.T) {
 	t.Parallel()
-	db, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	defer db.Close()
 
-	s := New(db)
+	mockDB, mock, err := sqlmock.New()
+	require.NoError(t, err)
+
+	defer mockDB.Close()
+
+	s := db.New(mockDB)
 
 	rows := sqlmock.NewRows([]string{"name"}).
 		AddRow(userAlice).
-		RowError(1, mockErrRows)
+		RowError(1, errRows)
 
 	mock.ExpectQuery(querySelectUniqueNames).WillReturnRows(rows)
 
 	names, err := s.GetUniqueNames()
-	assert.ErrorContains(t, err, "rows error")
+	require.ErrorContains(t, err, "rows error")
 	assert.Nil(t, names)
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGetUniqueNames_CloseFail(t *testing.T) {
 	t.Parallel()
-	db, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	defer db.Close()
 
-	s := New(db)
+	mockDB, mock, err := sqlmock.New()
+	require.NoError(t, err)
+
+	defer mockDB.Close()
+
+	s := db.New(mockDB)
 
 	rows := sqlmock.NewRows([]string{"name"}).
 		AddRow(userAlice).
-		CloseError(mockErrClose)
+		CloseError(errClose)
 
 	mock.ExpectQuery(querySelectUniqueNames).WillReturnRows(rows)
 
