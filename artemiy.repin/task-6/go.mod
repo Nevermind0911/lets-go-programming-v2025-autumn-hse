@@ -2,7 +2,7 @@ module github.com/Nevermind0911/task-6
 
 go 1.22.7
 
-toolchain go1.22.7
+toolchain go1.24.11
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
