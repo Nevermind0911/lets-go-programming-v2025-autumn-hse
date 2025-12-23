@@ -7,7 +7,6 @@ import (
 
 	"github.com/Nevermind0911/task-6/internal/wifi"
 	mdlayherwifi "github.com/mdlayher/wifi"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -33,8 +32,8 @@ func TestGetAddresses_Success(t *testing.T) {
 	addrs, err := svc.GetAddresses()
 
 	require.NoError(t, err)
-	assert.Len(t, addrs, 2)
-	assert.Equal(t, []net.HardwareAddr{macAddr1, macAddr2}, addrs)
+	require.Len(t, addrs, 2)
+	require.Equal(t, []net.HardwareAddr{macAddr1, macAddr2}, addrs)
 }
 
 func TestGetAddresses_Error(t *testing.T) {
@@ -48,9 +47,8 @@ func TestGetAddresses_Error(t *testing.T) {
 
 	result, err := svc.GetAddresses()
 
-	require.Error(t, err)
 	require.ErrorContains(t, err, "getting interfaces")
-	assert.Nil(t, result)
+	require.Nil(t, result)
 }
 
 func TestGetAddresses_Empty(t *testing.T) {
@@ -65,8 +63,8 @@ func TestGetAddresses_Empty(t *testing.T) {
 	addrs, err := svc.GetAddresses()
 
 	require.NoError(t, err)
-	assert.Empty(t, addrs)
-	assert.NotNil(t, addrs)
+	require.Empty(t, addrs)
+	require.NotNil(t, addrs)
 }
 
 func TestGetNames_Success(t *testing.T) {
@@ -86,7 +84,7 @@ func TestGetNames_Success(t *testing.T) {
 	names, err := svc.GetNames()
 
 	require.NoError(t, err)
-	assert.Equal(t, []string{"wlan0", "eth0"}, names)
+	require.Equal(t, []string{"wlan0", "eth0"}, names)
 }
 
 func TestGetNames_Error(t *testing.T) {
@@ -100,7 +98,6 @@ func TestGetNames_Error(t *testing.T) {
 
 	names, err := svc.GetNames()
 
-	require.Error(t, err)
 	require.ErrorContains(t, err, "getting interfaces")
-	assert.Nil(t, names)
+	require.Nil(t, names)
 }

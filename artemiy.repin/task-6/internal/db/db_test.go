@@ -6,7 +6,6 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/Nevermind0911/task-6/internal/db"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -42,8 +41,8 @@ func TestGetNames_Success(t *testing.T) {
 
 	names, err := s.GetNames()
 	require.NoError(t, err)
-	assert.Equal(t, []string{userAlice, userBob}, names)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.Equal(t, []string{userAlice, userBob}, names)
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGetNames_Empty(t *testing.T) {
@@ -62,8 +61,8 @@ func TestGetNames_Empty(t *testing.T) {
 
 	names, err := s.GetNames()
 	require.NoError(t, err)
-	assert.Empty(t, names)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.Empty(t, names)
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGetNames_QueryFail(t *testing.T) {
@@ -80,8 +79,8 @@ func TestGetNames_QueryFail(t *testing.T) {
 
 	names, err := s.GetNames()
 	require.ErrorContains(t, err, "db query")
-	assert.Nil(t, names)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.Nil(t, names)
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGetNames_ScanFail(t *testing.T) {
@@ -100,8 +99,8 @@ func TestGetNames_ScanFail(t *testing.T) {
 
 	names, err := s.GetNames()
 	require.ErrorContains(t, err, "rows scanning")
-	assert.Nil(t, names)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.Nil(t, names)
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGetNames_RowsIterationFail(t *testing.T) {
@@ -122,8 +121,8 @@ func TestGetNames_RowsIterationFail(t *testing.T) {
 
 	names, err := s.GetNames()
 	require.ErrorContains(t, err, "rows error")
-	assert.Nil(t, names)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.Nil(t, names)
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGetNames_CloseFail(t *testing.T) {
@@ -144,8 +143,8 @@ func TestGetNames_CloseFail(t *testing.T) {
 
 	names, err := s.GetNames()
 	require.NoError(t, err)
-	assert.Equal(t, []string{userAlice}, names)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.Equal(t, []string{userAlice}, names)
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGetUniqueNames_Success(t *testing.T) {
@@ -166,8 +165,8 @@ func TestGetUniqueNames_Success(t *testing.T) {
 
 	names, err := s.GetUniqueNames()
 	require.NoError(t, err)
-	assert.Equal(t, []string{userAlice, userBob}, names)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.Equal(t, []string{userAlice, userBob}, names)
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGetUniqueNames_Empty(t *testing.T) {
@@ -186,8 +185,8 @@ func TestGetUniqueNames_Empty(t *testing.T) {
 
 	names, err := s.GetUniqueNames()
 	require.NoError(t, err)
-	assert.Empty(t, names)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.Empty(t, names)
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGetUniqueNames_QueryFail(t *testing.T) {
@@ -204,8 +203,8 @@ func TestGetUniqueNames_QueryFail(t *testing.T) {
 
 	names, err := s.GetUniqueNames()
 	require.ErrorContains(t, err, "db query")
-	assert.Nil(t, names)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.Nil(t, names)
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGetUniqueNames_ScanFail(t *testing.T) {
@@ -224,8 +223,8 @@ func TestGetUniqueNames_ScanFail(t *testing.T) {
 
 	names, err := s.GetUniqueNames()
 	require.ErrorContains(t, err, "rows scanning")
-	assert.Nil(t, names)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.Nil(t, names)
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGetUniqueNames_RowsIterationFail(t *testing.T) {
@@ -246,8 +245,8 @@ func TestGetUniqueNames_RowsIterationFail(t *testing.T) {
 
 	names, err := s.GetUniqueNames()
 	require.ErrorContains(t, err, "rows error")
-	assert.Nil(t, names)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.Nil(t, names)
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGetUniqueNames_CloseFail(t *testing.T) {
@@ -268,6 +267,6 @@ func TestGetUniqueNames_CloseFail(t *testing.T) {
 
 	names, err := s.GetUniqueNames()
 	require.NoError(t, err)
-	assert.Equal(t, []string{userAlice}, names)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.Equal(t, []string{userAlice}, names)
+	require.NoError(t, mock.ExpectationsWereMet())
 }
